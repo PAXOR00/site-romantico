@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel do Amor 💜</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,"Segoe UI",Roboto,sans-serif; background:linear-gradient(160deg,#2b0a3d,#4a148c,#6a1b9a); color:#fff; min-height:100vh; }
+  #aviso { position:fixed; top:0; left:0; right:0; z-index:50; padding:12px; text-align:center; font-weight:600; font-size:14px; box-shadow:0 2px 8px rgba(0,0,0,.3); display:none; }
+  #aviso.ok { display:block; background:#16a34a; color:#fff; }
+  #aviso.err { display:block; background:#dc2626; color:#fff; }
+  .wrap { max-width:520px; margin:0 auto; padding:64px 16px 40px; }
+  header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+  header h1 { font-size:22px; }
+  header a { color:#f8bbd0; text-decoration:none; font-size:14px; }
+  .card { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:16px; padding:16px; margin-bottom:16px; }
+  .card h3 { font-size:17px; margin-bottom:12px; color:#f8bbd0; }
+  input,textarea { width:100%; padding:10px 12px; border:1px solid rgba(255,255,255,.15); border-radius:10px; background:rgba(255,255,255,.08); color:#fff; font-size:14px; font-family:inherit; margin-bottom:10px; }
+  input::placeholder, textarea::placeholder { color:rgba(255,255,255,.45); }
+  textarea { resize:vertical; min-height:70px; }
+  .btn { display:inline-flex; align-items:center; gap:8px; justify-content:center; padding:11px 16px; border:none; border-radius:10px; background:#c2185b; color:#fff; font-weight:600; font-size:14px; cursor:pointer; width:100%; }
+  .btn:hover { background:#e91e63; }
+  .btn:disabled { opacity:.6; cursor:default; }
+  .bar { width:100%; height:6px; background:rgba(255,255,255,.12); border-radius:6px; overflow:hidden; margin-top:8px; display:none; }
+  .bar i { display:block; height:100%; width:0; background:#f8bbd0; transition:width .2s; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
+  .item { border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.05); position:relative; }
+  .item img, .item video { width:100%; height:90px; object-fit:cover; display:block; }
+  .item .info { padding:6px 8px; font-size:12px; }
+  .del { color:#fca5a5; background:none; border:none; cursor:pointer; font-size:12px; margin-top:4px; display:flex; align-items:center; gap:4px; }
+  .list { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+  .list .row { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12); padding:10px 12px; border-radius:10px; }
+  .list .row p { font-size:14px; }
+  .list .row small { display:block; margin-top:4px; opacity:.6; font-size:12px; }
+  .empty { opacity:.5; font-style:italic; font-size:14px; }
+  audio { width:100%; margin-bottom:10px; }
+</style>
+</head>
+<body>
+<div id="aviso"></div>
+<div class="wrap">
+  <header>
+    <h1>💜 Painel do Amor</h1>
+    <a href="index.html">← Ver site</a>
+  </header>
+
+  <div class="card">
+    <h3>🎵 Música</h3>
+    <div id="musicaAtual"></div>
+    <input type="file" id="musicaFile" accept="audio/*" hidden>
+    <button class="btn" onclick="document.getElementById('musicaFile').click()">📤 Enviar música</button>
+    <div class="bar" id="musicaBar"><i></i></div>
+  </div>
+
+  <div class="card">
+    <h3>📸 Fotos</h3>
+    <input type="text" id="fotoLeg" placeholder="Legenda (opcional)">
+    <input type="file" id="fotoFile" accept="image/*" hidden>
+    <button class="btn" onclick="document.getElementById('fotoFile').click()">📤 Enviar foto</button>
+    <div class="bar" id="fotoBar"><i></i></div>
+    <div class="grid" id="fotosLista"></div>
+  </div>
+
+  <div class="card">
+    <h3>🎬 Vídeos</h3>
+    <input type="text" id="videoLeg" placeholder="Legenda (opcional)">
+    <input type="file" id="videoFile" accept="video/*" hidden>
+    <button class="btn" onclick="document.getElementById('videoFile').click()">📤 Enviar vídeo</button>
+    <div class="bar" id="videoBar"><i></i></div>
+    <div class="grid" id="videosLista"></div>
+  </div>
+
+  <div class="card">
+    <h3>✨ Mensagens</h3>
+    <textarea id="msgTexto" placeholder="Escreva uma mensagem..."></textarea>
+    <input type="text" id="msgAutor" placeholder="Autor (opcional)">
+    <button class="btn" id="msgBtn" onclick="addTexto('mensagens','msgTexto','msgAutor','msgLista','msgBtn')">➕ Adicionar mensagem</button>
+    <div class="list" id="msgLista"></div>
+  </div>
+
+  <div class="card">
+    <h3>💌 Cartinhas</h3>
+    <textarea id="cartTexto" placeholder="Escreva sua cartinha..."></textarea>
+    <input type="text" id="cartAutor" placeholder="Autor (opcional)">
+    <button class="btn" id="cartBtn" onclick="addTexto('cartinhas','cartTexto','cartAutor','cartLista','cartBtn')">➕ Adicionar cartinha</button>
+    <div class="list" id="cartLista"></div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://dfizgbmpjwjzpubgvlkk.supabase.co"
+const SUPABASE_KEY = "sb_publishable_UGbIT4vZW0jnc_7HMF8h8g_wrX1No9n"
+const BUCKET_NAME = "site-amor"
+const H = { apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY, "Content-Type": "application/json" }
+
+let avisoTimer
+function avisar(ok, msg){
+  const a = document.getElementById("aviso")
+  a.className = ok ? "ok" : "err"
+  a.textContent = ok ? "✅ SALVO DE VERDADE! Atualize a página principal!" : ("❌ " + (msg || "Erro ao salvar"))
+  clearTimeout(avisoTimer)
+  if(ok) avisoTimer = setTimeout(()=>{ a.className=""; a.textContent="" }, 5000)
+}
+
+async function list(table){
+  const r = await fetch(SUPABASE_URL+"/rest/v1/"+table+"?order=created_at.desc",{headers:H})
+  if(!r.ok) throw new Error(await r.text())
+  return r.json()
+}
+async function insert(table,row){
+  const r = await fetch(SUPABASE_URL+"/rest/v1/"+table,{method:"POST",headers:{...H,Prefer:"return=representation"},body:JSON.stringify(row)})
+  if(!r.ok) throw new Error(await r.text())
+  return r.json()
+}
+async function remove(table,id){
+  const r = await fetch(SUPABASE_URL+"/rest/v1/"+table+"?id=eq."+id,{method:"DELETE",headers:H})
+  if(!r.ok) throw new Error(await r.text())
+}
+async function getConfig(){
+  const r = await fetch(SUPABASE_URL+"/rest/v1/configuracoes?select=chave,valor",{headers:H}); if(!r.ok) return {}
+  const rows=await r.json(); const c={}; rows.forEach(x=>c[x.chave]=x.valor); return c
+}
+async function upsertConfig(chave,valor){
+  const r = await fetch(SUPABASE_URL+"/rest/v1/configuracoes?chave=eq."+encodeURIComponent(chave),{method:"PATCH",headers:{...H,Prefer:"return=representation"},body:JSON.stringify({valor})})
+  if(!r.ok) throw new Error(await r.text())
+  const up = await r.json(); if(!up.length) return insert("configuracoes",{chave,valor})
+}
+function upload(path,file,barId,cb){
+  const xhr = new XMLHttpRequest()
+  xhr.open("POST", SUPABASE_URL+"/storage/v1/object/"+BUCKET_NAME+"/"+path)
+  xhr.setRequestHeader("apikey", SUPABASE_KEY)
+  xhr.setRequestHeader("Authorization", "Bearer "+SUPABASE_KEY)
+  xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream")
+  xhr.upload.onprogress = e=>{ if(e.lengthComputable){ const p=Math.round(e.loaded/e.total*100); const bar=document.getElementById(barId); bar.style.display="block"; bar.firstElementChild.style.width=p+"%" } }
+  xhr.onload = ()=>{ if(xhr.status<300) cb(SUPABASE_URL+"/storage/v1/object/public/"+BUCKET_NAME+"/"+path); else avisar(false, xhr.responseText) }
+  xhr.onerror = ()=>avisar(false, "Erro de rede no upload")
+  xhr.send(file)
+}
+async function deleteFile(path){ try{ await fetch(SUPABASE_URL+"/storage/v1/object/"+BUCKET_NAME+"/"+path,{method:"DELETE",headers:H}) }catch(e){} }
+
+document.getElementById("musicaFile").addEventListener("change", e=>{
+  const f=e.target.files[0]; if(!f) return
+  upload("musicas/"+Date.now()+"-"+f.name.replace(/\s/g,"_"), f, "musicaBar", async url=>{
+    try{ await upsertConfig("musica_url",url); avisar(true); loadMusica() }catch(err){ avisar(false, err.message) }
+  })
+})
+async function loadMusica(){
+  const cfg = await getConfig()
+  document.getElementById("musicaAtual").innerHTML = cfg.musica_url ? '<audio controls src="'+cfg.musica_url+'"></audio>' : '<p class="empty">Nenhuma música ainda.</p>'
+}
+
+document.getElementById("fotoFile").addEventListener("change", e=>{
+  const f=e.target.files[0]; if(!f) return
+  const leg = document.getElementById("fotoLeg").value
+  upload("fotos/"+Date.now()+"-"+f.name.replace(/\s/g,"_"), f, "fotoBar", async url=>{
+    try{ await insert("fotos",{url,legenda:leg,caminho:"fotos/"+Date.now()+"-"+f.name.replace(/\s/g,"_")}); document.getElementById("fotoLeg").value=""; avisar(true); loadFotos() }catch(err){ avisar(false, err.message) }
+  })
+})
+async function loadFotos(){
+  const data = await list("fotos").catch(()=>[])
+  document.getElementById("fotosLista").innerHTML = data.length ? data.map(x=>'<div class="item"><img src="'+x.url+'"><div class="info">'+esc(x.legenda||'Sem legenda')+'<br><button class="del" onclick="delItem(\'fotos\','+x.id+',\''+(x.caminho||'')+'\')">🗑 Excluir</button></div></div>').join('') : '<p class="empty col-span-2" style="grid-column:span 2">Nada enviado ainda.</p>'
+}
+
+document.getElementById("videoFile").addEventListener("change", e=>{
+  const f=e.target.files[0]; if(!f) return
+  const leg = document.getElementById("videoLeg").value
+  upload("videos/"+Date.now()+"-"+f.name.replace(/\s/g,"_"), f, "videoBar", async url=>{
+    try{ await insert("videos",{url,legenda:leg,caminho:"videos/"+Date.now()+"-"+f.name.replace(/\s/g,"_")}); document.getElementById("videoLeg").value=""; avisar(true); loadVideos() }catch(err){ avisar(false, err.message) }
+  })
+})
+async function loadVideos(){
+  const data = await list("videos").catch(()=>[])
+  document.getElementById("videosLista").innerHTML = data.length ? data.map(x=>'<div class="item"><video src="'+x.url+'"></video><div class="info">'+esc(x.legenda||'Sem legenda')+'<br><button class="del" onclick="delItem(\'videos\','+x.id+',\''+(x.caminho||'')+'\')">🗑 Excluir</button></div></div>').join('') : '<p class="empty col-span-2" style="grid-column:span 2">Nada enviado ainda.</p>'
+}
+
+async function addTexto(table, txtId, autId, listaId, btnId){
+  const t = document.getElementById(txtId).value.trim(); if(!t) return
+  document.getElementById(btnId).disabled = true
+  try{ await insert(table,{texto:t,autor:document.getElementById(autId).value||null}); document.getElementById(txtId).value=""; document.getElementById(autId).value=""; avisar(true); loadLista(table,listaId) }
+  catch(e){ avisar(false, e.message) }
+  finally{ document.getElementById(btnId).disabled = false }
+}
+async function loadLista(table,listaId){
+  const data = await list(table).catch(()=>[])
+  document.getElementById(listaId).innerHTML = data.length ? data.map(x=>'<div class="row"><div><p>'+esc(x.texto)+'</p>'+(x.autor?'<small>— '+esc(x.autor)+'</small>':'')+'</div><button class="del" onclick="delItem(\''+table+'\','+x.id+',\'\')">🗑</button></div>').join('') : '<p class="empty">Nada ainda.</p>'
+}
+async function delItem(table,id,caminho){
+  if(!confirm("Excluir?")) return
+  try{ if(caminho) await deleteFile(caminho); await remove(table,id); avisar(true)
+    if(table==="fotos") loadFotos()
+    else if(table==="videos") loadVideos()
+    else if(table==="mensagens") loadLista("mensagens","msgLista")
+    else if(table==="cartinhas") loadLista("cartinhas","cartLista")
+  }catch(e){ avisar(false, e.message) }
+}
+
+function esc(s){ return (s||"").replace(/[<>&]/g, c=>({"<":"<",">":">","&":"&"}[c])) }
+
+loadMusica(); loadFotos(); loadVideos(); loadLista("mensagens","msgLista"); loadLista("cartinhas","cartLista")
+</script>
+</body>
+</html>

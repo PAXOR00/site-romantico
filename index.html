@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Para Você, Meu Amor 💜</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(160deg, #2b0a3d 0%, #4a148c 45%, #6a1b9a 100%);
+    color: #fff;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .hearts { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+  .hearts span {
+    position: absolute; bottom: -40px; color: #f8bbd0; opacity: .35;
+    animation: up 12s linear infinite; font-size: 18px;
+  }
+  @keyframes up {
+    0%   { transform: translateY(0) rotate(0); opacity: 0; }
+    10%  { opacity: .45; }
+    90%  { opacity: .45; }
+    100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+  }
+  .wrap { position: relative; z-index: 1; max-width: 600px; margin: 0 auto; padding: 48px 18px; }
+  .hero { text-align: center; margin-bottom: 56px; }
+  .hero h1 {
+    font-size: 34px; font-weight: 700; line-height: 1.2;
+    background: linear-gradient(90deg, #f8bbd0, #e1bee7);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero p { margin-top: 12px; color: #f3e5f5; opacity: .8; font-size: 16px; }
+  .heart-icon { font-size: 40px; margin-bottom: 12px; }
+  .section { margin-bottom: 48px; }
+  .section h2 {
+    font-size: 21px; margin-bottom: 16px; color: #f8bbd0; display: flex; align-items: center; gap: 10px;
+  }
+  .card {
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12);
+    border-radius: 16px; padding: 16px; margin-bottom: 12px; backdrop-filter: blur(6px);
+  }
+  .card .autor { margin-top: 10px; font-size: 13px; color: #f3e5f5; opacity: .7; }
+  .fotos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .fotos figure { border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,.12); }
+  .fotos img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+  .fotos figcaption { padding: 8px 10px; font-size: 13px; background: rgba(255,255,255,.06); }
+  .video-box { border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,.12); margin-bottom: 12px; }
+  .video-box video { width: 100%; display: block; }
+  .video-box .leg { padding: 8px 12px; font-size: 13px; background: rgba(255,255,255,.06); }
+  audio { width: 100%; border-radius: 12px; }
+  .empty { color: #f3e5f5; opacity: .5; font-style: italic; }
+  .letter { background: linear-gradient(135deg, rgba(248,187,208,.18), rgba(225,190,231,.18)); border: 1px solid rgba(248,187,208,.25); }
+  footer { text-align: center; margin-top: 40px; color: #f3e5f5; opacity: .5; font-size: 14px; }
+  .loader { display:flex; justify-content:center; padding: 60px 0; }
+  .loader div { width:34px; height:34px; border:3px solid rgba(255,255,255,.2); border-top-color:#f8bbd0; border-radius:50%; animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="hearts" id="hearts"></div>
+<div class="wrap">
+  <div class="hero">
+    <div class="heart-icon">💜</div>
+    <h1 id="titulo">Para Você, Meu Amor</h1>
+    <p id="subtitulo">Um cantinho feito com 💜 só pra nós dois</p>
+  </div>
+
+  <div class="loader" id="loader"><div></div></div>
+
+  <section class="section">
+    <h2>🎵 Nossa Música</h2>
+    <div id="musica"></div>
+  </section>
+
+  <section class="section">
+    <h2>✨ Mensagens</h2>
+    <div id="mensagens"></div>
+  </section>
+
+  <section class="section">
+    <h2>📸 Fotos</h2>
+    <div class="fotos" id="fotos"></div>
+  </section>
+
+  <section class="section">
+    <h2>🎬 Vídeos</h2>
+    <div id="videos"></div>
+  </section>
+
+  <section class="section">
+    <h2>💌 Cartinhas</h2>
+    <div id="cartinhas"></div>
+  </section>
+
+  <footer>Feito com 💜 só pra você</footer>
+</div>
+
+<script>
+const SUPABASE_URL = "https://dfizgbmpjwjzpubgvlkk.supabase.co"
+const SUPABASE_KEY = "sb_publishable_UGbIT4vZW0jnc_7HMF8h8g_wrX1No9n"
+const BUCKET_NAME = "site-amor"
+const H = { apikey: SUPABASE_KEY, Authorization: "Bearer " + SUPABASE_KEY, "Content-Type": "application/json" }
+
+const hb = document.getElementById("hearts")
+for (let i=0;i<16;i++){const s=document.createElement("span");s.textContent="💜";s.style.left=Math.random()*100+"%";s.style.fontSize=(14+Math.random()*20)+"px";s.style.animationDuration=(8+Math.random()*10)+"s";s.style.animationDelay=(Math.random()*10)+"s";hb.appendChild(s)}
+
+async function list(table){
+  const r = await fetch(SUPABASE_URL+"/rest/v1/"+table+"?order=created_at.desc",{headers:H})
+  if(!r.ok) throw new Error(await r.text())
+  return r.json()
+}
+async function getConfig(){
+  const r = await fetch(SUPABASE_URL+"/rest/v1/configuracoes?select=chave,valor",{headers:H})
+  if(!r.ok) return {}
+  const rows = await r.json(); const c={}; rows.forEach(x=>c[x.chave]=x.valor); return c
+}
+
+(async () => {
+  try{
+    const [cfg,msg,ft,vd,ct] = await Promise.all([getConfig().catch(()=>({})),list("mensagens").catch(()=>[]),list("fotos").catch(()=>[]),list("videos").catch(()=>[]),list("cartinhas").catch(()=>[])])
+    if(cfg.titulo) document.getElementById("titulo").textContent = cfg.titulo
+    if(cfg.subtitulo) document.getElementById("subtitulo").textContent = cfg.subtitulo
+
+    const m = document.getElementById("musica")
+    if(cfg.musica_url){ m.innerHTML = '<audio controls src="'+cfg.musica_url+'"></audio>' }
+    else m.innerHTML = '<p class="empty">Nenhuma música ainda.</p>'
+
+    const msgEl = document.getElementById("mensagens")
+    msgEl.innerHTML = msg.length? msg.map(x=>'<div class="card"><p>'+esc(x.texto)+'</p>'+(x.autor?'<div class="autor">— '+esc(x.autor)+'</div>':'')+'</div>').join('') : '<p class="empty">Nenhuma mensagem ainda.</p>'
+
+    const ftEl = document.getElementById("fotos")
+    ftEl.innerHTML = ft.length? ft.map(x=>'<figure><img src="'+x.url+'" alt=""><figcaption>'+esc(x.legenda||'')+'</figcaption></figure>').join('') : '<p class="empty">Nenhuma foto ainda.</p>'
+
+    const vdEl = document.getElementById("videos")
+    vdEl.innerHTML = vd.length? vd.map(x=>'<div class="video-box"><video controls src="'+x.url+'"></video><div class="leg">'+esc(x.legenda||'')+'</div></div>').join('') : '<p class="empty">Nenhum vídeo ainda.</p>'
+
+    const ctEl = document.getElementById("cartinhas")
+    ctEl.innerHTML = ct.length? ct.map(x=>'<div class="card letter"><p>'+esc(x.texto)+'</p>'+(x.autor?'<div class="autor">— '+esc(x.autor)+'</div>':'')+'</div>').join('') : '<p class="empty">Nenhuma carta ainda.</p>'
+  }catch(e){
+    document.getElementById("loader").innerHTML = '<p class="empty">'+e.message+'</p>'
+  }finally{
+    document.getElementById("loader").style.display="none"
+  }
+})()
+
+function esc(s){ return (s||"").replace(/[<>&]/g, c=>({"<":"<",">":">","&":"&"}[c])) }
+</script>
+</body>
+</html>
