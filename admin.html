@@ -3,37 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Painel do Amor 💜</title>
+<title>Painel do Amor 💙</title>
 <style>
+  :root {
+    --bg-main: #f0f4f8;
+    --bg-card: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --primary: #0284c7;
+    --primary-hover: #0369a1;
+    --border: #e2e8f0;
+  }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:-apple-system,"Segoe UI",Roboto,sans-serif; background:linear-gradient(160deg,#2b0a3d,#4a148c,#6a1b9a); color:#fff; min-height:100vh; }
-  #aviso { position:fixed; top:0; left:0; right:0; z-index:50; padding:12px; text-align:center; font-weight:600; font-size:14px; box-shadow:0 2px 8px rgba(0,0,0,.3); display:none; }
-  #aviso.ok { display:block; background:#16a34a; color:#fff; }
-  #aviso.err { display:block; background:#dc2626; color:#fff; }
-  .wrap { max-width:520px; margin:0 auto; padding:64px 16px 40px; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg-main); color:var(--text-main); min-height:100vh; }
+  
+  #aviso { position:fixed; top:0; left:0; right:0; z-index:50; padding:12px; text-align:center; font-weight:600; font-size:14px; box-shadow:0 2px 8px rgba(0,0,0,.08); display:none; }
+  #aviso.ok { display:block; background:#10b981; color:#fff; }
+  #aviso.err { display:block; background:#ef4444; color:#fff; }
+
+  .wrap { max-width:520px; margin:0 auto; padding:48px 16px 40px; }
   header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
-  header h1 { font-size:22px; }
-  header a { color:#f8bbd0; text-decoration:none; font-size:14px; }
-  .card { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:16px; padding:16px; margin-bottom:16px; }
-  .card h3 { font-size:17px; margin-bottom:12px; color:#f8bbd0; }
-  input,textarea { width:100%; padding:10px 12px; border:1px solid rgba(255,255,255,.15); border-radius:10px; background:rgba(255,255,255,.08); color:#fff; font-size:14px; font-family:inherit; margin-bottom:10px; }
-  input::placeholder, textarea::placeholder { color:rgba(255,255,255,.45); }
+  header h1 { font-size:20px; color:#0f172a; font-weight: 700; }
+  header a { color:var(--primary); text-decoration:none; font-size:14px; font-weight: 600; }
+
+  .card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:16px; box-shadow:0 1px 3px rgba(0,0,0,0.02); }
+  .card h3 { font-size:16px; margin-bottom:12px; color:#0f172a; font-weight: 600; }
+  
+  input,textarea { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:#fafafa; color:var(--text-main); font-size:14px; font-family:inherit; margin-bottom:10px; }
+  input:focus, textarea:focus { outline: none; border-color: var(--primary); background: #fff; }
+  input::placeholder, textarea::placeholder { color:#94a3b8; }
   textarea { resize:vertical; min-height:70px; }
-  .btn { display:inline-flex; align-items:center; gap:8px; justify-content:center; padding:11px 16px; border:none; border-radius:10px; background:#c2185b; color:#fff; font-weight:600; font-size:14px; cursor:pointer; width:100%; }
-  .btn:hover { background:#e91e63; }
+
+  .btn { display:inline-flex; align-items:center; gap:8px; justify-content:center; padding:10px 16px; border:none; border-radius:8px; background:var(--primary); color:#fff; font-weight:600; font-size:14px; cursor:pointer; width:100%; transition: background 0.2s; }
+  .btn:hover { background:var(--primary-hover); }
   .btn:disabled { opacity:.6; cursor:default; }
-  .bar { width:100%; height:6px; background:rgba(255,255,255,.12); border-radius:6px; overflow:hidden; margin-top:8px; display:none; }
-  .bar i { display:block; height:100%; width:0; background:#f8bbd0; transition:width .2s; }
+
+  .bar { width:100%; height:6px; background:var(--border); border-radius:6px; overflow:hidden; margin-top:8px; display:none; }
+  .bar i { display:block; height:100%; width:0; background:var(--primary); transition:width .2s; }
+
   .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
-  .item { border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.05); position:relative; }
+  .item { border-radius:8px; overflow:hidden; border:1px solid var(--border); background:#fafafa; position:relative; }
   .item img, .item video { width:100%; height:90px; object-fit:cover; display:block; }
-  .item .info { padding:6px 8px; font-size:12px; }
-  .del { color:#fca5a5; background:none; border:none; cursor:pointer; font-size:12px; margin-top:4px; display:flex; align-items:center; gap:4px; }
+  .item .info { padding:8px; font-size:12px; color:var(--text-muted); }
+  .del { color:#ef4444; background:none; border:none; cursor:pointer; font-size:12px; margin-top:6px; font-weight: 500; display:flex; align-items:center; gap:4px; }
+
   .list { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
-  .list .row { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12); padding:10px 12px; border-radius:10px; }
-  .list .row p { font-size:14px; }
-  .list .row small { display:block; margin-top:4px; opacity:.6; font-size:12px; }
-  .empty { opacity:.5; font-style:italic; font-size:14px; }
+  .list .row { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; background:#fafafa; border:1px solid var(--border); padding:10px 12px; border-radius:8px; }
+  .list .row p { font-size:14px; color:var(--text-main); }
+  .list .row small { display:block; margin-top:4px; color:var(--text-muted); font-size:12px; }
+  .empty { color:var(--text-muted); font-style:italic; font-size:13px; }
   audio { width:100%; margin-bottom:10px; }
 </style>
 </head>
@@ -41,8 +59,8 @@
 <div id="aviso"></div>
 <div class="wrap">
   <header>
-    <h1>💜 Painel do Amor</h1>
-    <a href="index.html">← Ver site</a>
+    <h1>💙 Painel do Amor</h1>
+    <a href="index.html">Ver site →</a>
   </header>
 
   <div class="card">
@@ -98,9 +116,9 @@ let avisoTimer
 function avisar(ok, msg){
   const a = document.getElementById("aviso")
   a.className = ok ? "ok" : "err"
-  a.textContent = ok ? "✅ SALVO DE VERDADE! Atualize a página principal!" : ("❌ " + (msg || "Erro ao salvar"))
+  a.textContent = ok ? "✅ SALVO COM SUCESSO!" : ("❌ " + (msg || "Erro ao salvar"))
   clearTimeout(avisoTimer)
-  if(ok) avisoTimer = setTimeout(()=>{ a.className=""; a.textContent="" }, 5000)
+  if(ok) avisoTimer = setTimeout(()=>{ a.className=""; a.textContent="" }, 4000)
 }
 
 async function list(table){
@@ -159,7 +177,7 @@ document.getElementById("fotoFile").addEventListener("change", e=>{
 })
 async function loadFotos(){
   const data = await list("fotos").catch(()=>[])
-  document.getElementById("fotosLista").innerHTML = data.length ? data.map(x=>'<div class="item"><img src="'+x.url+'"><div class="info">'+esc(x.legenda||'Sem legenda')+'<br><button class="del" onclick="delItem(\'fotos\','+x.id+',\''+(x.caminho||'')+'\')">🗑 Excluir</button></div></div>').join('') : '<p class="empty col-span-2" style="grid-column:span 2">Nada enviado ainda.</p>'
+  document.getElementById("fotosLista").innerHTML = data.length ? data.map(x=>'<div class="item"><img src="'+x.url+'"><div class="info">'+esc(x.legenda||'Sem legenda')+'<br><button class="del" onclick="delItem(\'fotos\','+x.id+',\''+(x.caminho||'')+'\')">Excluir</button></div></div>').join('') : '<p class="empty" style="grid-column:span 2">Nada enviado ainda.</p>'
 }
 
 document.getElementById("videoFile").addEventListener("change", e=>{
@@ -171,7 +189,7 @@ document.getElementById("videoFile").addEventListener("change", e=>{
 })
 async function loadVideos(){
   const data = await list("videos").catch(()=>[])
-  document.getElementById("videosLista").innerHTML = data.length ? data.map(x=>'<div class="item"><video src="'+x.url+'"></video><div class="info">'+esc(x.legenda||'Sem legenda')+'<br><button class="del" onclick="delItem(\'videos\','+x.id+',\''+(x.caminho||'')+'\')">🗑 Excluir</button></div></div>').join('') : '<p class="empty col-span-2" style="grid-column:span 2">Nada enviado ainda.</p>'
+  document.getElementById("videosLista").innerHTML = data.length ? data.map(x=>'<div class="item"><video src="'+x.url+'"></video><div class="info">'+esc(x.legenda||'Sem legenda')+'<br><button class="del" onclick="delItem(\'videos\','+x.id+',\''+(x.caminho||'')+'\')">Excluir</button></div></div>').join('') : '<p class="empty" style="grid-column:span 2">Nada enviado ainda.</p>'
 }
 
 async function addTexto(table, txtId, autId, listaId, btnId){
@@ -183,10 +201,10 @@ async function addTexto(table, txtId, autId, listaId, btnId){
 }
 async function loadLista(table,listaId){
   const data = await list(table).catch(()=>[])
-  document.getElementById(listaId).innerHTML = data.length ? data.map(x=>'<div class="row"><div><p>'+esc(x.texto)+'</p>'+(x.autor?'<small>— '+esc(x.autor)+'</small>':'')+'</div><button class="del" onclick="delItem(\''+table+'\','+x.id+',\'\')">🗑</button></div>').join('') : '<p class="empty">Nada ainda.</p>'
+  document.getElementById(listaId).innerHTML = data.length ? data.map(x=>'<div class="row"><div><p>'+esc(x.texto)+'</p>'+(x.autor?'<small>— '+esc(x.autor)+'</small>':'')+'</div><button class="del" onclick="delItem(\''+table+'\','+x.id+',\'\')">Excluir</button></div>').join('') : '<p class="empty">Nada ainda.</p>'
 }
 async function delItem(table,id,caminho){
-  if(!confirm("Excluir?")) return
+  if(!confirm("Excluir item?")) return
   try{ if(caminho) await deleteFile(caminho); await remove(table,id); avisar(true)
     if(table==="fotos") loadFotos()
     else if(table==="videos") loadVideos()
