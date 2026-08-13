@@ -5,104 +5,95 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Painel do Amor 💙</title>
 <style>
-  :root {
-    --bg-main: #f0f4f8;
-    --bg-card: #ffffff;
-    --text-main: #1e293b;
-    --text-muted: #64748b;
-    --primary: #0284c7;
-    --primary-hover: #0369a1;
-    --border: #e2e8f0;
-  }
+  :root { --primary: #0284c7; --primary-hover: #0369a1; }
   * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--bg-main); color:var(--text-main); min-height:100vh; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:#f4f4f9; color:#1e293b; min-height:100vh; }
   
-  #aviso { position:fixed; top:0; left:0; right:0; z-index:50; padding:12px; text-align:center; font-weight:600; font-size:14px; box-shadow:0 2px 8px rgba(0,0,0,.08); display:none; }
+  #aviso { position:fixed; top:0; left:0; right:0; z-index:50; padding:12px; text-align:center; font-weight:600; font-size:14px; display:none; }
   #aviso.ok { display:block; background:#10b981; color:#fff; }
   #aviso.err { display:block; background:#ef4444; color:#fff; }
 
-  .wrap { max-width:520px; margin:0 auto; padding:48px 16px 40px; }
+  .wrap { max-width:520px; margin:0 auto; padding:40px 16px; }
   header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
   header h1 { font-size:20px; color:#0f172a; font-weight: 700; }
   header a { color:var(--primary); text-decoration:none; font-size:14px; font-weight: 600; }
 
-  .card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:16px; box-shadow:0 1px 3px rgba(0,0,0,0.02); }
-  .card h3 { font-size:16px; margin-bottom:12px; color:#0f172a; font-weight: 600; }
+  .card { background:#fff; border:1px solid #e2e8f0; border-radius:12px; padding:20px; margin-bottom:16px; box-shadow:0 2px 4px rgba(0,0,0,0.02); }
+  .card h3 { font-size:16px; margin-bottom:14px; color:#0f172a; font-weight: 600; display: flex; align-items: center; gap: 8px; }
   
-  input,textarea { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; background:#fafafa; color:var(--text-main); font-size:14px; font-family:inherit; margin-bottom:10px; }
+  input,textarea { width:100%; padding:12px; border:1px solid #cbd5e1; border-radius:8px; background:#f8fafc; font-size:14px; font-family:inherit; margin-bottom:12px; transition: border 0.2s; }
   input:focus, textarea:focus { outline: none; border-color: var(--primary); background: #fff; }
-  input::placeholder, textarea::placeholder { color:#94a3b8; }
-  textarea { resize:vertical; min-height:70px; }
+  textarea { resize:vertical; min-height:80px; }
 
-  .btn { display:inline-flex; align-items:center; gap:8px; justify-content:center; padding:10px 16px; border:none; border-radius:8px; background:var(--primary); color:#fff; font-weight:600; font-size:14px; cursor:pointer; width:100%; transition: background 0.2s; }
+  .btn { display:inline-flex; align-items:center; gap:8px; justify-content:center; padding:12px 16px; border:none; border-radius:8px; background:var(--primary); color:#fff; font-weight:600; font-size:14px; cursor:pointer; width:100%; transition: background 0.2s; }
   .btn:hover { background:var(--primary-hover); }
   .btn:disabled { opacity:.6; cursor:default; }
 
-  .bar { width:100%; height:6px; background:var(--border); border-radius:6px; overflow:hidden; margin-top:8px; display:none; }
+  .bar { width:100%; height:6px; background:#e2e8f0; border-radius:6px; overflow:hidden; margin-top:8px; display:none; }
   .bar i { display:block; height:100%; width:0; background:var(--primary); transition:width .2s; }
 
-  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px; }
-  .item { border-radius:8px; overflow:hidden; border:1px solid var(--border); background:#fafafa; position:relative; }
-  .item img, .item video { width:100%; height:90px; object-fit:cover; display:block; }
-  .item .info { padding:8px; font-size:12px; color:var(--text-muted); }
-  .del { color:#ef4444; background:none; border:none; cursor:pointer; font-size:12px; margin-top:6px; font-weight: 500; display:flex; align-items:center; gap:4px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:16px; }
+  .item { border-radius:8px; overflow:hidden; border:1px solid #e2e8f0; background:#f8fafc; }
+  .item img, .item video { width:100%; height:100px; object-fit:cover; display:block; }
+  .item .info { padding:10px; font-size:12px; color:#64748b; }
+  .del { color:#ef4444; background:none; border:none; cursor:pointer; font-size:12px; margin-top:8px; font-weight: 600; }
 
-  .list { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
-  .list .row { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; background:#fafafa; border:1px solid var(--border); padding:10px 12px; border-radius:8px; }
-  .list .row p { font-size:14px; color:var(--text-main); }
-  .list .row small { display:block; margin-top:4px; color:var(--text-muted); font-size:12px; }
-  .empty { color:var(--text-muted); font-style:italic; font-size:13px; }
-  audio { width:100%; margin-bottom:10px; }
+  .list { display:flex; flex-direction:column; gap:10px; margin-top:16px; }
+  .list .row { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:8px; }
+  .list .row p { font-size:14px; color:#334155; line-height:1.4; }
+  .list .row small { display:block; margin-top:6px; color:#64748b; font-size:12px; }
+  .empty { color:#94a3b8; font-style:italic; font-size:13px; text-align: center; }
+  audio { width:100%; margin-bottom:12px; }
 </style>
 </head>
 <body>
 <div id="aviso"></div>
 <div class="wrap">
   <header>
-    <h1>💙 Painel do Amor</h1>
+    <h1>💙 Painel de Controle</h1>
     <a href="index.html">Ver site →</a>
   </header>
 
   <div class="card">
-    <h3>🎵 Música</h3>
+    <h3>🎵 Definir Música</h3>
     <div id="musicaAtual"></div>
     <input type="file" id="musicaFile" accept="audio/*" hidden>
-    <button class="btn" onclick="document.getElementById('musicaFile').click()">📤 Enviar música</button>
+    <button class="btn" onclick="document.getElementById('musicaFile').click()">📤 Selecionar Áudio</button>
     <div class="bar" id="musicaBar"><i></i></div>
   </div>
 
   <div class="card">
-    <h3>📸 Fotos</h3>
-    <input type="text" id="fotoLeg" placeholder="Legenda (opcional)">
+    <h3>💌 Cartinhas Fechadas</h3>
+    <textarea id="cartTexto" placeholder="Escreva a cartinha surpresa..."></textarea>
+    <input type="text" id="cartAutor" placeholder="Assinatura (opcional)">
+    <button class="btn" id="cartBtn" onclick="addTexto('cartinhas','cartTexto','cartAutor','cartLista','cartBtn')">➕ Salvar Carta</button>
+    <div class="list" id="cartLista"></div>
+  </div>
+
+  <div class="card">
+    <h3>✨ Mensagens Visíveis</h3>
+    <textarea id="msgTexto" placeholder="Mensagem normal no site..."></textarea>
+    <input type="text" id="msgAutor" placeholder="Assinatura (opcional)">
+    <button class="btn" id="msgBtn" onclick="addTexto('mensagens','msgTexto','msgAutor','msgLista','msgBtn')">➕ Salvar Mensagem</button>
+    <div class="list" id="msgLista"></div>
+  </div>
+
+  <div class="card">
+    <h3>📸 Galeria de Fotos</h3>
+    <input type="text" id="fotoLeg" placeholder="Legenda da foto">
     <input type="file" id="fotoFile" accept="image/*" hidden>
-    <button class="btn" onclick="document.getElementById('fotoFile').click()">📤 Enviar foto</button>
+    <button class="btn" onclick="document.getElementById('fotoFile').click()">📤 Enviar Foto</button>
     <div class="bar" id="fotoBar"><i></i></div>
     <div class="grid" id="fotosLista"></div>
   </div>
 
   <div class="card">
-    <h3>🎬 Vídeos</h3>
-    <input type="text" id="videoLeg" placeholder="Legenda (opcional)">
+    <h3>🎬 Galeria de Vídeos</h3>
+    <input type="text" id="videoLeg" placeholder="Legenda do vídeo">
     <input type="file" id="videoFile" accept="video/*" hidden>
-    <button class="btn" onclick="document.getElementById('videoFile').click()">📤 Enviar vídeo</button>
+    <button class="btn" onclick="document.getElementById('videoFile').click()">📤 Enviar Vídeo</button>
     <div class="bar" id="videoBar"><i></i></div>
     <div class="grid" id="videosLista"></div>
-  </div>
-
-  <div class="card">
-    <h3>✨ Mensagens</h3>
-    <textarea id="msgTexto" placeholder="Escreva uma mensagem..."></textarea>
-    <input type="text" id="msgAutor" placeholder="Autor (opcional)">
-    <button class="btn" id="msgBtn" onclick="addTexto('mensagens','msgTexto','msgAutor','msgLista','msgBtn')">➕ Adicionar mensagem</button>
-    <div class="list" id="msgLista"></div>
-  </div>
-
-  <div class="card">
-    <h3>💌 Cartinhas</h3>
-    <textarea id="cartTexto" placeholder="Escreva sua cartinha..."></textarea>
-    <input type="text" id="cartAutor" placeholder="Autor (opcional)">
-    <button class="btn" id="cartBtn" onclick="addTexto('cartinhas','cartTexto','cartAutor','cartLista','cartBtn')">➕ Adicionar cartinha</button>
-    <div class="list" id="cartLista"></div>
   </div>
 </div>
 
@@ -118,7 +109,7 @@ function avisar(ok, msg){
   a.className = ok ? "ok" : "err"
   a.textContent = ok ? "✅ SALVO COM SUCESSO!" : ("❌ " + (msg || "Erro ao salvar"))
   clearTimeout(avisoTimer)
-  if(ok) avisoTimer = setTimeout(()=>{ a.className=""; a.textContent="" }, 4000)
+  if(ok) avisoTimer = setTimeout(()=>{ a.className=""; a.textContent="" }, 3000)
 }
 
 async function list(table){
@@ -160,7 +151,7 @@ async function deleteFile(path){ try{ await fetch(SUPABASE_URL+"/storage/v1/obje
 document.getElementById("musicaFile").addEventListener("change", e=>{
   const f=e.target.files[0]; if(!f) return
   upload("musicas/"+Date.now()+"-"+f.name.replace(/\s/g,"_"), f, "musicaBar", async url=>{
-    try{ await upsertConfig("musica_url",url); avisar(true); loadMusica() }catch(err){ avisar(false, err.message) }
+    try{ await upsertConfig("musica_url",url); avisar(true); loadMusica(); document.getElementById("musicaBar").style.display="none"; }catch(err){ avisar(false, err.message) }
   })
 })
 async function loadMusica(){
@@ -172,24 +163,24 @@ document.getElementById("fotoFile").addEventListener("change", e=>{
   const f=e.target.files[0]; if(!f) return
   const leg = document.getElementById("fotoLeg").value
   upload("fotos/"+Date.now()+"-"+f.name.replace(/\s/g,"_"), f, "fotoBar", async url=>{
-    try{ await insert("fotos",{url,legenda:leg,caminho:"fotos/"+Date.now()+"-"+f.name.replace(/\s/g,"_")}); document.getElementById("fotoLeg").value=""; avisar(true); loadFotos() }catch(err){ avisar(false, err.message) }
+    try{ await insert("fotos",{url,legenda:leg,caminho:"fotos/"+Date.now()+"-"+f.name.replace(/\s/g,"_")}); document.getElementById("fotoLeg").value=""; avisar(true); loadFotos(); document.getElementById("fotoBar").style.display="none"; }catch(err){ avisar(false, err.message) }
   })
 })
 async function loadFotos(){
   const data = await list("fotos").catch(()=>[])
-  document.getElementById("fotosLista").innerHTML = data.length ? data.map(x=>'<div class="item"><img src="'+x.url+'"><div class="info">'+esc(x.legenda||'Sem legenda')+'<br><button class="del" onclick="delItem(\'fotos\','+x.id+',\''+(x.caminho||'')+'\')">Excluir</button></div></div>').join('') : '<p class="empty" style="grid-column:span 2">Nada enviado ainda.</p>'
+  document.getElementById("fotosLista").innerHTML = data.length ? data.map(x=>'<div class="item"><img src="'+x.url+'"><div class="info">'+esc(x.legenda||'Sem legenda')+'<br><button class="del" onclick="delItem(\'fotos\','+x.id+',\''+(x.caminho||'')+'\')">Excluir</button></div></div>').join('') : '<p class="empty" style="grid-column:span 2">Nenhuma foto.</p>'
 }
 
 document.getElementById("videoFile").addEventListener("change", e=>{
   const f=e.target.files[0]; if(!f) return
   const leg = document.getElementById("videoLeg").value
   upload("videos/"+Date.now()+"-"+f.name.replace(/\s/g,"_"), f, "videoBar", async url=>{
-    try{ await insert("videos",{url,legenda:leg,caminho:"videos/"+Date.now()+"-"+f.name.replace(/\s/g,"_")}); document.getElementById("videoLeg").value=""; avisar(true); loadVideos() }catch(err){ avisar(false, err.message) }
+    try{ await insert("videos",{url,legenda:leg,caminho:"videos/"+Date.now()+"-"+f.name.replace(/\s/g,"_")}); document.getElementById("videoLeg").value=""; avisar(true); loadVideos(); document.getElementById("videoBar").style.display="none"; }catch(err){ avisar(false, err.message) }
   })
 })
 async function loadVideos(){
   const data = await list("videos").catch(()=>[])
-  document.getElementById("videosLista").innerHTML = data.length ? data.map(x=>'<div class="item"><video src="'+x.url+'"></video><div class="info">'+esc(x.legenda||'Sem legenda')+'<br><button class="del" onclick="delItem(\'videos\','+x.id+',\''+(x.caminho||'')+'\')">Excluir</button></div></div>').join('') : '<p class="empty" style="grid-column:span 2">Nada enviado ainda.</p>'
+  document.getElementById("videosLista").innerHTML = data.length ? data.map(x=>'<div class="item"><video src="'+x.url+'"></video><div class="info">'+esc(x.legenda||'Sem legenda')+'<br><button class="del" onclick="delItem(\'videos\','+x.id+',\''+(x.caminho||'')+'\')">Excluir</button></div></div>').join('') : '<p class="empty" style="grid-column:span 2">Nenhum vídeo.</p>'
 }
 
 async function addTexto(table, txtId, autId, listaId, btnId){
@@ -201,10 +192,10 @@ async function addTexto(table, txtId, autId, listaId, btnId){
 }
 async function loadLista(table,listaId){
   const data = await list(table).catch(()=>[])
-  document.getElementById(listaId).innerHTML = data.length ? data.map(x=>'<div class="row"><div><p>'+esc(x.texto)+'</p>'+(x.autor?'<small>— '+esc(x.autor)+'</small>':'')+'</div><button class="del" onclick="delItem(\''+table+'\','+x.id+',\'\')">Excluir</button></div>').join('') : '<p class="empty">Nada ainda.</p>'
+  document.getElementById(listaId).innerHTML = data.length ? data.map(x=>'<div class="row"><div><p>'+esc(x.texto)+'</p>'+(x.autor?'<small>— '+esc(x.autor)+'</small>':'')+'</div><button class="del" onclick="delItem(\''+table+'\','+x.id+',\'\')">Excluir</button></div>').join('') : '<p class="empty">Nenhum item.</p>'
 }
 async function delItem(table,id,caminho){
-  if(!confirm("Excluir item?")) return
+  if(!confirm("Tem certeza que quer excluir?")) return
   try{ if(caminho) await deleteFile(caminho); await remove(table,id); avisar(true)
     if(table==="fotos") loadFotos()
     else if(table==="videos") loadVideos()
